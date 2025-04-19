@@ -100,7 +100,7 @@ _get_root() {
   if ! _isp_rest "domain" "" "text"; then
     return 1
   else
-    for z in $(echo "$response" | cut -f7 -d' ' | cut -f2 -d'='); do
+    for z in $(echo "$response" | sed 's/ /\n/g' | grep 'name=' | cut -f2 -d'='); do
       _debug2 zone "$z";
       if [ "$(echo "$domain" | _egrep_o ".*\.$z$")" ]; then
         root_zone=$z;
@@ -108,7 +108,7 @@ _get_root() {
         return 0
       fi
     done;
-    err "root zone for $domain not found"
+    _err "root zone for $domain not found"
     return 1
   fi
 }
